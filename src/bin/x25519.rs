@@ -7,26 +7,25 @@ fn main() {
         eprintln!("Usage: x25519 <m> [<u>]");
         std::process::exit(1);
     }
-    dbg!(args[1].as_bytes());
-    let m = hex::decode(args[1].as_bytes()).expect("Invalid hex-encoded string for m");
-    dbg!(m.clone());
+
+    let m = hex::decodeScalar25519(&args[1]);
 
     let u = if args.len() == 3 {
-        hex::decode(args[2].as_bytes()).expect("Invalid hex-encoded string for u")
+        hex::decodeUCoordinate(&args[2])
     } else {
-        hex::decode("09".as_bytes()).expect("Invalid hex-encoded string for base point")
+        hex::decodeUCoordinate(&"0900000000000000000000000000000000000000000000000000000000000000".to_string())
     };
+    
+    let p = &x22519::elliptic::P.clone();
+    let a24:&num_bigint::BigInt = &(x22519::elliptic::A24.clone());
 
-    /*
-    let secret = StaticSecret::from(m);
-    let public = PublicKey::from(&secret);
+    let result = x22519::elliptic::ladder(&m, &u, p, a24);
+    let result = &result.0 * num_bigint::BigInt::modpow(&result.1, &(p-num_bigint::BigInt::from(2)), p) % p;
+    //let result = String::from(result.to_radix_be(16).1.to_ascii_lowercase());
+    let result = result.to_bytes_be().1;
+    for i in (0..result.len()).rev() {
+        print!("{:x}", result[i]);
+    }
+    print!("\n");
 
-    let shared_secret = if u.is_empty() {
-        secret.diffie_hellman(&PublicKey::from([9u8; 32]))
-    } else {
-        secret.diffie_hellman(&PublicKey::from(u))
-    };
-    */
-    println!("Decoding functional");
-    //println!("{}", hex::encode(shared_secret.to_bytes()));
 }

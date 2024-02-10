@@ -5,12 +5,9 @@
 # How to compile
 
 - For release : `make all`
-- Binaries will be accessible under /release
+- To run code : `cargo run m [u]`
+- to test xADD, xDBL and ladder all work, defined in src/lib.rs. : do `cargo test --package x22519 --lib -- elliptic::tests::test_ladder --exact --nocapture`.
 
 # For cleanup
 
 - Run `make clean`
-
-# For quick test
-
-- Run `make test`
